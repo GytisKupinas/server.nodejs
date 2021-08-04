@@ -12,6 +12,7 @@ app.get("/labas", (req, res) => {
 });
  
 app.get("/style.css", (req, res) => {
+    res.set("Content-Type", "text/css");
  res.send(`
 .zydras {
  background-color: aqua;
@@ -30,7 +31,7 @@ app.get("/index.html", (req, res) => {
  <title>Document</title>
  <link rel="stylesheet" href="./style.css">
  </head>
- <body class="zydras">
+ <body class= "zydras">
  zydrasis ekranas 
  </body>
  </html>
