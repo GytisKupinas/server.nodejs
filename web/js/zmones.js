@@ -58,7 +58,7 @@ function addZmogus(zmogus) {
     if (typeof zmogus.alga !== "number") {
         return;
     }
-    zmogus = Object.apply({}, zmogus, {id: nextId++});
+    zmogus = Object.assign({}, zmogus, {id: nextId++});
     if (typeof zmogus.gimimoData === "string") {
         zmogus.gimimoData = new Date(zmogus.gimimoData);
     }
@@ -66,15 +66,12 @@ function addZmogus(zmogus) {
 }
 
 function deleteZmogus(id) {
-    const index = zmones.find(z => z.id === id);
+    const index = zmones.findIndex(z => z.id === id);
     if (index >= 0) {
         zmones.splice(index, 1);
     }
 }
 
 function getZmogus(id) {
-    const index = zmones.find(z => z.id === id);
-    if (index >= 0) {
-        return zmones[index];
-    }
+    return zmones.find(z => z.id === id);
 }
