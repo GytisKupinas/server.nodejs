@@ -23,8 +23,20 @@ const zmones = [
     }
 ];
 
-function getZmones() {
+function getZmonesVietinis() {
     return zmones.slice(0);
+}
+async function getZmones() {
+    try {
+        const sarasas = await fetch("/zmones").then(res => res.json());
+        for (const zmogus of sarasas) {
+            zmogus.gimimoData = new Date(zmogus.gimimoData);
+        }
+        return sarasas;
+    } catch (err) {
+        console.error("Klaida skaitant zmones");
+        return [];
+    }
 }
 
 /*
@@ -36,7 +48,7 @@ function getZmones() {
     }
 */
 
-function addZmogus(zmogus) {
+function addZmogusVietinis(zmogus) {
     if (typeof zmogus !== "object") {
         return;
     }
@@ -64,14 +76,58 @@ function addZmogus(zmogus) {
     }
     zmones.push(zmogus);
 }
+async function addZmogus(zmogus) {
+    if (typeof zmogus !== "object") {
+        return;
+    }
+    if (typeof zmogus.vardas !== "string") {
+        return;
+    }
+    if (typeof zmogus.pavarde !== "string") {
+        return;
+    }
+    // 2021-08-25
+    if (typeof zmogus.gimimoData === "string") {
+        let dateTest = new Date(zmogus.gimimoData);
+        if (isNaN(dateTest.getTime())) {
+            return;
+        }
+    } else if (!(zmogus.gimimoData instanceof Date)) {
+        return;
+    }
+    if (typeof zmogus.alga !== "number") {
+        return;
+    }
+    zmogus = Object.assign({}, zmogus);
+    if (typeof zmogus.gimimoData === "string") {
+        zmogus.gimimoData = new Date(zmogus.gimimoData);
+    }
+    await fetch("/zmones/add", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(zmogus)
+    });
+}
 
-function deleteZmogus(id) {
+function deleteZmogusVidinis(id) {
     const index = zmones.findIndex(z => z.id === id);
     if (index >= 0) {
         zmones.splice(index, 1);
     }
 }
+async function deleteZmogus(id) {
+    await fetch("/zmones/" + id, {
+        method: "DELETE"
+    });
+}
 
-function getZmogus(id) {
+function getZmogusVidinis(id) {
     return zmones.find(z => z.id === id);
+}
+async function getZmogus(id) {
+    const zmogus = await fetch("/zmones/" + id).then(res => res.json());
+    zmogus.gimimoData = new Date(zmogus.gimimoData);
+    return zmogus;
 }
